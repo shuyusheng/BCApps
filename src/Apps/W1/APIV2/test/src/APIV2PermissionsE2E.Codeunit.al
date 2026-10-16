@@ -22,7 +22,7 @@ codeunit 139929 "APIV2 - Permissions E2E"
         AllObj: Record AllObj;
         UriBuilder: Codeunit "Uri Builder";
         Uri: Codeunit Uri;
-        ResponseText, ValueText : Text;
+        ResponseText, ValueText, ElementText : Text;
     begin
         // [SCENARIO] Effective permission correctly filters response by user and object filters
         EnvironmentInfoTestLibrary.SetTestabilitySoftwareAsAService(false);
@@ -71,16 +71,16 @@ codeunit 139929 "APIV2 - Permissions E2E"
         LibraryGraphMgt.GetFromWebService(ResponseText, Uri.GetAbsoluteUri());
 
         // [THEN] The response should only contain the effective permissions for the filtered user and object
-        Assert.IsTrue(LibraryGraphMgt.GetPropertyValueFromJSON(ResponseText, 'value', ResponseText), 'Could not find values collection in response');
-        ValueText := LibraryGraphMgt.GetObjectFromCollectionByIndex(ResponseText, 0);
-        VerifyPropertyInJSON(ValueText, 'userName', UserId());
-        VerifyPropertyInJSON(ValueText, 'objectType', Format(AllObj."Object Type"));
-        VerifyPropertyInJSON(ValueText, 'objectID', Format(AllObj."Object ID"));
-        VerifyPropertyInJSON(ValueText, 'readPermission', Format(TenantPermission[1]."Read Permission"));
-        VerifyPropertyInJSON(ValueText, 'insertPermission', Format(TenantPermission[1]."Insert Permission"));
-        VerifyPropertyInJSON(ValueText, 'modifyPermission', Format(TenantPermission[1]."Modify Permission"));
-        VerifyPropertyInJSON(ValueText, 'deletePermission', Format(TenantPermission[1]."Delete Permission"));
-        VerifyPropertyInJSON(ValueText, 'executePermission', Format(TenantPermission[1]."Execute Permission"));
+        Assert.IsTrue(LibraryGraphMgt.GetPropertyValueFromJSON(ResponseText, 'value', ValueText), 'Could not find values collection in response');
+        ElementText := LibraryGraphMgt.GetObjectFromCollectionByIndex(ValueText, 0);
+        VerifyPropertyInJSON(ElementText, 'userName', UserId());
+        VerifyPropertyInJSON(ElementText, 'objectType', Format(AllObj."Object Type"));
+        VerifyPropertyInJSON(ElementText, 'objectID', Format(AllObj."Object ID"));
+        VerifyPropertyInJSON(ElementText, 'readPermission', Format(TenantPermission[1]."Read Permission"));
+        VerifyPropertyInJSON(ElementText, 'insertPermission', Format(TenantPermission[1]."Insert Permission"));
+        VerifyPropertyInJSON(ElementText, 'modifyPermission', Format(TenantPermission[1]."Modify Permission"));
+        VerifyPropertyInJSON(ElementText, 'deletePermission', Format(TenantPermission[1]."Delete Permission"));
+        VerifyPropertyInJSON(ElementText, 'executePermission', Format(TenantPermission[1]."Execute Permission"));
 
         asserterror LibraryGraphMgt.GetObjectFromCollectionByIndex(ResponseText, 1);
     end;

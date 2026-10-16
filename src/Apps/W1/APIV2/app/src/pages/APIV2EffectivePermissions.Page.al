@@ -97,7 +97,7 @@ page 30253 "APIV2 - Effective Permissions"
           (Rec.GetFilter("Object ID") = '') then
             Error(MissingFilterErr);
         if Rec.GetFilter(Company) = '' then
-            Rec.SetFilter(Company, CopyStr(CompanyName(), 1, MaxStrLen(Rec.Company)))
+            TargetCompany := CopyStr(CompanyName(), 1, MaxStrLen(TargetCompany))
         else begin
             CompanyRec.SetFilter(Name, Rec.GetFilter(Company));
             CompanyRec.FindFirst();

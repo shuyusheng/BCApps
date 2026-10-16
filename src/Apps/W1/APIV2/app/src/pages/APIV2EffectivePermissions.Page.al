@@ -96,12 +96,13 @@ page 30253 "APIV2 - Effective Permissions"
           (Rec.GetFilter("User Security ID") = '') and
           (Rec.GetFilter("Object ID") = '') then
             Error(MissingFilterErr);
-
-        CompanyRec.SetFilter(Name, Rec.GetFilter(Company));
-        if CompanyRec.FindFirst() then
-            TargetCompany := CompanyRec.Name
-        else
-            TargetCompany := CopyStr(CompanyName(), 1, MaxStrLen(TargetCompany));
+        if Rec.GetFilter(Company) = '' then
+            Rec.SetFilter(Company, CopyStr(CompanyName(), 1, MaxStrLen(Rec.Company)))
+        else begin
+            CompanyRec.SetFilter(Name, Rec.GetFilter(Company));
+            CompanyRec.FindFirst();
+            TargetCompany := CompanyRec.Name;
+        end;
 
         User.SetLoadFields("User Security ID", "User Name");
         User.SetFilter("User Name", Rec.GetFilter("User Name"));

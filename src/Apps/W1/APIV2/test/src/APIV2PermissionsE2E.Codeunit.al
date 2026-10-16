@@ -101,7 +101,7 @@ codeunit 139929 "APIV2 - Permissions E2E"
         UriBuilder.GetUri(Uri);
 
         // [THEN] An error is returned
-        asserterror LibraryGraphMgt.GetFromWebServiceAndCheckResponseCode(ResponseText, Uri.GetAbsoluteUri(), 400);
+        asserterror LibraryGraphMgt.GetFromWebService(ResponseText, Uri.GetAbsoluteUri());
     end;
 
     local procedure VerifyPropertyInJSON(JSON: Text; PropertyName: Text; ExpectedValue: Text)

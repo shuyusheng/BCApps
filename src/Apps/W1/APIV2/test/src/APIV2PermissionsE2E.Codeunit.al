@@ -82,7 +82,7 @@ codeunit 139929 "APIV2 - Permissions E2E"
         VerifyPropertyInJSON(ElementText, 'deletePermission', Format(TenantPermission[1]."Delete Permission"));
         VerifyPropertyInJSON(ElementText, 'executePermission', Format(TenantPermission[1]."Execute Permission"));
 
-        asserterror LibraryGraphMgt.GetObjectFromCollectionByIndex(ResponseText, 1);
+        asserterror LibraryGraphMgt.GetObjectFromCollectionByIndex(ValueText, 1);
     end;
 
     [Test]

@@ -46,4 +46,9 @@ pageextension 9871 "BaseApp Security Groups" extends "Security Groups"
             end;
         }
     }
+
+    internal procedure GetSelectionFilter(var SecurityGroupBuffer: Record "Security Group Buffer")
+    begin
+        CurrPage.SetSelectionFilter(SecurityGroupBuffer);
+    end;
 }

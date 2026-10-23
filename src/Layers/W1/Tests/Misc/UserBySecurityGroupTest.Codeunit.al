@@ -95,7 +95,7 @@ codeunit 139495 UserBySecurityGroupTest
         TempSecurityGroupBufferCopy.Delete();
 
         // [WHEN] All columns are shifted to the right
-        UserBySecurityGroup.AllColumnsRight.Invoke();
+        UserBySecurityGroup.NextSet.Invoke();
 
         // [THEN] The first column shows the last unaccounted for security group, with the remaining columns blank
         AssertSecurityGroupCaption(UserBySecurityGroup.IsSecurityGroupMember1.Caption(), TempSecurityGroupBuffer);
@@ -110,7 +110,7 @@ codeunit 139495 UserBySecurityGroupTest
         AssertBlankCaption(UserBySecurityGroup.IsSecurityGroupMember10.Caption());
 
         // [WHEN] All columns are shifted back to the left
-        UserBySecurityGroup.AllColumnsLeft.Invoke();
+        UserBySecurityGroup.PreviousSet.Invoke();
 
         // [THEN] Then same set of security groups is displayed as before the shift right
         AssertSecurityGroupCaption(UserBySecurityGroup.IsSecurityGroupMember1.Caption(), TempSecurityGroupBufferCopy);
@@ -136,7 +136,7 @@ codeunit 139495 UserBySecurityGroupTest
             if Found then
                 SecurityGroupBuffer.Delete();
         until (SecurityGroupBuffer.Next() = 0) or Found;
-        Assert.IsTrue(Found, 'Unexpected security group caption' + Caption);
+        Assert.IsTrue(Found, 'Unexpected security group caption ' + Caption);
     end;
 
     local procedure AssertBlankCaption(Caption: Text)
@@ -183,9 +183,12 @@ codeunit 139495 UserBySecurityGroupTest
         UserInfo: DotNet UserInfo;
     begin
         CreateSecurityGroup(SecurityGroupBuffer);
-
         CreateUser(UserInfo, GraphUser."User Security ID");
-        GraphUser.Find();
+
+        GraphUser.Reset();
+        GraphUser.SetRange("User Security ID", GraphUser."User Security ID");
+        GraphUser.FindFirst();
+
         MockGraphQueryTestLibrary.AddGraphUserToGroup(UserInfo, SecurityGroupBuffer."Group Name", SecurityGroupBuffer."Group ID");
     end;
 

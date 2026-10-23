@@ -45,6 +45,7 @@ page 9887 "User by Security Group"
                             SecurityGroups.GetSelectionFilter(TempSecurityGroupBuffer);
                             RecRef.GetTable(TempSecurityGroupBuffer);
                             Text := SelectionFilterMgt.GetSelectionFilter(RecRef, TempSecurityGroupBuffer.FieldNo(Code));
+                            SecurityGroupFilter := Text;
                             LoadData(true);
                             exit(true);
                         end;
@@ -71,6 +72,7 @@ page 9887 "User by Security Group"
                             Users.GetSelectionFilter(User);
                             RecRef.GetTable(User);
                             Text := SelectionFilterMgt.GetSelectionFilter(RecRef, User.FieldNo("User Name"));
+                            UserFilter := Text;
                             Rec.SetFilter("User Name", UserFilter);
                             CurrPage.Update(false);
                             exit(true);
@@ -158,7 +160,6 @@ page 9887 "User by Security Group"
             }
         }
     }
-
     actions
     {
         area(processing)
@@ -166,28 +167,30 @@ page 9887 "User by Security Group"
             action(Refresh)
             {
                 Caption = 'Refresh';
-                ToolTip = 'Refresh the data on the page based on the currently filters.';
+                ToolTip = 'Refresh the data on the page based on the current filters.';
                 Image = Refresh;
                 trigger OnAction()
                 begin
                     LoadData(true);
                 end;
             }
-            action(AllColumnsLeft)
+            action(PreviousSet)
             {
-                Caption = 'All Columns Left';
+                Caption = 'Previous Set';
                 Image = PreviousSet;
-                ToolTip = 'Jump to the left-most column.';
+                ToolTip = 'Go to the previous set of data.';
+                Enabled = PreviousSetEnabled;
                 trigger OnAction()
                 begin
                     ShiftColumn(-GetColumnCount(), true);
                 end;
             }
-            action(AllColumnsRight)
+            action(NextSet)
             {
-                Caption = 'All Columns Right';
+                Caption = 'Next Set';
                 Image = NextSet;
-                ToolTip = 'Jump to the right-most column.';
+                ToolTip = 'Go to the next set of data.';
+                Enabled = NextSetEnabled;
                 trigger OnAction()
                 begin
                     ShiftColumn(GetColumnCount(), true);
@@ -199,8 +202,8 @@ page 9887 "User by Security Group"
             group(Category_Process)
             {
                 actionref(Refresh_Promoted; Refresh) { }
-                actionref(AllColumnsLeft_Promoted; AllColumnsLeft) { }
-                actionref(AllColumnsRight_Promoted; AllColumnsRight) { }
+                actionref(PreviousSet_Promoted; PreviousSet) { }
+                actionref(NextSet_Promoted; NextSet) { }
             }
         }
     }
@@ -214,6 +217,7 @@ page 9887 "User by Security Group"
         SecurityGroupCodes: array[10] of Code[20];
         IsSecurityGroupMember: array[10] of Boolean;
         IsColumn1Visible, IsColumn2Visible, IsColumn3Visible, IsColumn4Visible, IsColumn5Visible, IsColumn6Visible, IsColumn7Visible, IsColumn8Visible, IsColumn9Visible, IsColumn10Visible : Boolean;
+        NextSetEnabled, PreviousSetEnabled : Boolean;
         ColumnOffset: Integer;
 
     trigger OnOpenPage()
@@ -244,12 +248,21 @@ page 9887 "User by Security Group"
 
     local procedure ShiftColumn(Steps: Integer; Update: Boolean)
     var
+        NextOffset: Integer;
         ColumnVisible: Boolean;
         i: Integer;
     begin
-        ColumnOffset += Steps;
-        if ColumnOffset < 0 then
-            ColumnOffset := 0;
+        NextOffset := ColumnOffset + Steps;
+        NextSetEnabled := NextOffset + 1 < SecurityGroupCodeIndices.Count();
+        PreviousSetEnabled := NextOffset > 0;
+        case true of
+            NextOffset < 0:
+                ColumnOffset := 0;
+            NextOffset >= SecurityGroupCodeIndices.Count():
+                exit;
+            else
+                ColumnOffset := NextOffset;
+        end;
         for i := 1 to GetColumnCount() do begin
             SecurityGroupCodes[i] := '';
             ColumnVisible := false;

@@ -18,7 +18,7 @@ codeunit 139495 UserBySecurityGroupTest
         TempSecurityGroupBuffer: array[2] of Record "Security Group Buffer";
         UserBySecurityGroup: TestPage "User by Security Group";
     begin
-        // [SCENARIO] Use by Security Group filters correctly by user and group
+        // [SCENARIO] User by Security Group filters correctly by user and group
         Initialize();
         EnvironmentInfoTestLibrary.SetTestabilitySoftwareAsAService(true);
         AssertUserBySecurityGroupColumnCount();
@@ -29,7 +29,7 @@ codeunit 139495 UserBySecurityGroupTest
 
         UserBySecurityGroup.OpenEdit();
 
-        // [WHEN] THe user and group filters are applied
+        // [WHEN] The user and group filters are applied
         UserBySecurityGroup.UserFilter.SetValue(GraphUser[1]."User Name");
         UserBySecurityGroup.SecurityGroupFilter.SetValue(TempSecurityGroupBuffer[1].Code);
 

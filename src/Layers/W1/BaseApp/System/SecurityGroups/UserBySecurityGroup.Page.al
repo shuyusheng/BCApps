@@ -253,7 +253,7 @@ page 9887 "User by Security Group"
         i: Integer;
     begin
         NextOffset := ColumnOffset + Steps;
-        NextSetEnabled := NextOffset + 1 < SecurityGroupCodeIndices.Count();
+        NextSetEnabled := NextOffset + GetColumnCount() < SecurityGroupCodeIndices.Count();
         PreviousSetEnabled := NextOffset > 0;
         case true of
             NextOffset < 0:
